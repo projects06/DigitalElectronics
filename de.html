@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Electronics in Medical Instruments – Case Study</title>
+    <meta name="description"
+        content="Case study presentation on Use of Digital Electronics in Medical Instruments by Maanik, Class 506 B." />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+
+        /* ── RESET & BASE ──────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f9fbff;
+            --surface: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #4a5568;
+            --accent-primary: #1e3a8a;
+            /* Deep Navy */
+            --accent-secondary: #2563eb;
+            --border: #e2e8f0;
+            --formal-gold: #b59410;
+        }
+
+        html,
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ── TOP NAV ───────────────────────────────────── */
+        nav.topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 64px;
+            z-index: 500;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .topbar-brand {
+            color: var(--accent-primary);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .topbar-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .topbar-links a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .topbar-links a:hover,
+        .topbar-links a.active {
+            color: var(--accent-primary);
+        }
+
+        .topbar-print {
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+            background: transparent;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .topbar-print:hover {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+
+        /* ── DOT NAV ───────────────────────────────────── */
+        .dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 499;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dots a {
+            display: block;
+            width: 10px;
+            height: 10px;
+            border: 1px solid var(--accent-primary);
+            background: transparent;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .dots a.active,
+        .dots a:hover {
+            background: var(--accent-primary);
+            transform: scale(1.2);
+        }
+
+        /* ── SLIDES ────────────────────────────────────── */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 2.5rem 4rem;
+            position: relative;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .inner {
+            width: 100%;
+            max-width: 1000px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Watermark */
+        section::before {
+            content: '⚕';
+            position: absolute;
+            font-size: 30rem;
+            color: rgba(30, 58, 138, 0.02);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+            font-family: 'serif';
+        }
+
+        /* ── ANIMATION ─────────────────────────────────── */
+        .anim {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .anim.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .d1 {
+            transition-delay: 0.1s
+        }
+
+        .d2 {
+            transition-delay: 0.2s
+        }
+
+        .d3 {
+            transition-delay: 0.3s
+        }
+
+        .d4 {
+            transition-delay: 0.4s
+        }
+
+        .d5 {
+            transition-delay: 0.5s
+        }
+
+        /* ── SHARED TYPOGRAPHY ─────────────────────────── */
+        .eyebrow {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .eyebrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--accent-primary);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--accent-primary);
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        li {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.75;
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        li::before {
+            content: '▫';
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .bar {
+            width: 80px;
+            height: 4px;
+            background: var(--accent-primary);
+            margin: 1.5rem 0 2rem;
+        }
+
+        /* ── SLIDE 1 – TITLE ───────────────────────────── */
+        #s1 {
+            background: white url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            text-align: left;
+            border-bottom: 8px solid var(--accent-primary);
+        }
+
+        #s1 .inner {
+            max-width: 900px;
+        }
+
+        .title-kicker {
+            font-size: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .meta-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .meta-lbl {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .meta-val {
+            font-size: 1.1rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .title-tag {
+            display: inline-flex;
+            gap: 15px;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .title-tag b {
+            color: var(--accent-primary);
+        }
+
+        /* ── GRID CARDS ────────────────────────────────── */
+        .grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .g2 {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .g3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-color: var(--accent-primary);
+        }
+
+        .ci {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            opacity: 0.8;
+        }
+
+        /* ── APP LIST ──────────────────────────────────── */
+        .app-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .app-item {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            align-items: start;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            background: white;
+            transition: 0.3s;
+        }
+
+        .app-item:hover {
+            border-left: 5px solid var(--accent-primary);
+            background: #f8fafc;
+        }
+
+        .app-ico {
+            font-size: 2rem;
+        }
+
+        .app-body strong {
+            display: block;
+            color: var(--accent-primary);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── CASE STUDY ────────────────────────────────── */
+        .cs-wrap {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .flow-box {
+            background: #f1f5f9;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .step {
+            background: white;
+            border: 1px solid var(--accent-primary);
+            padding: 1rem;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .arr {
+            padding: 0.5rem 0;
+            text-align: center;
+            color: var(--accent-primary);
+            font-weight: 900;
+        }
+
+        .callout {
+            background: #fff;
+            border-left: 4px solid var(--accent-primary);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-style: italic;
+            color: var(--text-muted);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+        }
+
+        /* ── COLORED SECTIONS ─────────────────────────── */
+        .adv-grid,
+        .lim-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .adv-card {
+            border-top: 4px solid #16a34a;
+            background: #f0fdf4;
+        }
+
+        .lim-card {
+            border-top: 4px solid #dc2626;
+            background: #fef2f2;
+        }
+
+        /* ── CONCLUSION ────────────────────────────────── */
+        .concl-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .chip {
+            padding: 6px 16px;
+            background: white;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* ── BUTTONS ──────────────────────────────────── */
+        .btn-pdf {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 3rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-pdf:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.2);
+        }
+
+        /* ── PRINT MEDIA ───────────────────────────────── */
+        @media print {
+
+            nav,
+            .dots {
+                display: none !important;
+            }
+
+            section {
+                page-break-after: always;
+                padding: 2rem;
+                border-bottom: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .card,
+            .app-item,
+            .flow-box {
+                border: 1px solid #000 !important;
+            }
+        }
+
+        @media(max-width: 800px) {
+            .cs-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .g2,
+            .g3 {
+                grid-template-columns: 1fr;
+            }
+
+            nav.topbar {
+                padding: 0 1rem;
+            }
+
+            .topbar-links {
+                display: none;
+            }
+        }
+    </style>
+
+    /* ── PRINT MEDIA ───────────────────────────────── */
+    @media print {
+
+    nav,
+    .dots,
+    .topbar-print {
+    display: none !important;
+    }
+
+    section {
+    page-break-after: always;
+    min-height: auto;
+    padding: 2rem;
+    }
+
+    body,
+    * {
+    background: transparent !important;
+    color: #000 !important;
+    border-color: #ccc !important;
+    }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media(max-width:680px) {
+    .cs-wrap {
+    grid-template-columns: 1fr;
+    }
+
+    .topbar-links {
+    display: none;
+    }
+
+    .dots {
+    right: 0.6rem;
+    }
+
+    section {
+    padding: 68px 1.1rem 1.5rem;
+    }
+
+    .meta-row {
+    gap: 1.3rem;
+    }
+    }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP NAV -->
+    <nav class="topbar">
+        <span class="topbar-brand">⚕ Digital Electronics</span>
+        <div class="topbar-links">
+            <a href="#s1">Title</a>
+            <a href="#s2">Intro</a>
+            <a href="#s3">Concepts</a>
+            <a href="#s4">Applications</a>
+            <a href="#s5">Case Study</a>
+            <a href="#s6">Advantages</a>
+            <a href="#s7">Limitations</a>
+            <a href="#s8">Conclusion</a>
+        </div>
+        <button class="topbar-print" onclick="window.print()">🖨 Print / PDF</button>
+    </nav>
+
+    <!-- DOT NAV -->
+    <nav class="dots" id="dotNav">
+        <a href="#s1" title="Title"></a>
+        <a href="#s2" title="Introduction"></a>
+        <a href="#s3" title="Basic Concepts"></a>
+        <a href="#s4" title="Applications"></a>
+        <a href="#s5" title="Case Study"></a>
+        <a href="#s6" title="Advantages"></a>
+        <a href="#s7" title="Limitations"></a>
+        <a href="#s8" title="Conclusion"></a>
+    </nav>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 1 – TITLE
+══════════════════════════════════════════════════ -->
+    <section id="s1">
+        <div class="inner">
+            <p class="title-kicker anim">Unit 26 — Case Study Presentation</p>
+            <h1 class="anim d1">Use of Digital Electronics<br>in Medical Instruments</h1>
+            <div class="bar anim d2"></div>
+            <p class="anim d2" style="max-width:620px;">An academic case study exploring how digital electronic systems
+                power modern medical diagnostic and monitoring instruments.</p>
+
+            <div class="meta-row anim d3">
+                <div class="meta-item">
+                    <span class="meta-lbl">Student Name</span>
+                    <span class="meta-val">Maanik</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-lbl">Class / Section</span>
+                    <span class="meta-val">506 B</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-lbl">Subject</span>
+                    <span class="meta-val">Digital Electronics (DE)</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-lbl">Date</span>
+                    <span class="meta-val">April 2026</span>
+                </div>
+            </div>
+
+            <div class="title-tag anim d4">
+                <div class="pulse"></div>
+                <b>Case Study</b>&nbsp;·&nbsp;<b>Medical Technology</b>&nbsp;·&nbsp;<b>Digital Systems</b>
+            </div>
+
+            <div class="ecg-svg anim d5">
+                <svg viewBox="0 0 520 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline
+                        points="0,24 30,24 42,24 52,4 62,44 72,24 105,24 135,24 147,9 157,40 167,24 205,24 235,24 247,6 257,43 267,24 305,24 335,24 347,8 357,41 367,24 405,24 435,24 447,5 457,44 467,24 520,24"
+                        stroke="#17a3b8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 2 – INTRODUCTION
+══════════════════════════════════════════════════ -->
+    <section id="s2">
+        <div class="inner">
+            <span class="eyebrow anim">01 — Introduction</span>
+            <h2 class="anim d1">What is Digital Electronics?</h2>
+            <div class="bar anim d1"></div>
+
+            <p class="anim d2" style="margin-bottom:1.5rem;">
+                Digital Electronics is the branch of electronics that deals with circuits and systems operating on
+                <strong style="color:var(--teal)">discrete binary signals — 0 and 1</strong>. Unlike analog systems that
+                work with continuous voltage levels, digital systems process information in binary form, making them
+                precise, reliable, and easy to interface with computers and microcontrollers.
+            </p>
+
+            <div class="grid g2 anim d3">
+                <div class="card">
+                    <span class="ci">🏥</span>
+                    <h3>Importance in Medicine</h3>
+                    <p>Medical instruments require extreme accuracy for diagnosis and monitoring. Digital systems
+                        deliver consistent, repeatable measurements unaffected by environmental changes.</p>
+                </div>
+                <div class="card">
+                    <span class="ci">⚡</span>
+                    <h3>Digital vs Analog</h3>
+                    <p>Analog instruments are prone to noise and drift. Digital systems convert body signals into binary
+                        data — immune to noise, easy to store, and transmitted wirelessly.</p>
+                </div>
+                <div class="card">
+                    <span class="ci">📡</span>
+                    <h3>Why Digital is Preferred</h3>
+                    <ul style="margin-top:0.4rem;">
+                        <li>High accuracy and precision</li>
+                        <li>Immunity to electrical noise</li>
+                        <li>Easy data storage and sharing</li>
+                        <li>Integration with computers and apps</li>
+                        <li>Remote monitoring via IoT</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <span class="ci">🌐</span>
+                    <h3>Modern Healthcare Impact</h3>
+                    <p>From ICU monitors to wearable heart sensors, digital electronics form the technical backbone of
+                        all modern diagnostic and patient-monitoring tools used in hospitals.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 3 – BASIC CONCEPTS
+══════════════════════════════════════════════════ -->
+    <section id="s3">
+        <div class="inner">
+            <span class="eyebrow anim">02 — Basic Concepts</span>
+            <h2 class="anim d1">Fundamental Building Blocks</h2>
+            <div class="bar anim d1"></div>
+
+            <div class="grid g3 anim d2">
+                <!-- Digital Signals -->
+                <div class="card">
+                    <span class="ci">💡</span>
+                    <h3>Digital Signals (0 &amp; 1)</h3>
+                    <p>A digital signal has only two states — <strong style="color:var(--teal)">LOW (0)</strong> and
+                        <strong style="color:var(--teal)">HIGH (1)</strong>. These represent off/on or false/true. All
+                        medical data — temperature, heart rate, blood oxygen — is converted to binary for processing.
+                    </p>
+                    <div style="margin-top:0.7rem; display:flex; gap:5px; align-items:center;">
+                        <span
+                            style="font-size:0.7rem; background:rgba(220,38,38,0.2); color:#f87171; padding:3px 9px; border-radius:6px; font-weight:700;">0
+                            — LOW</span>
+                        <span style="font-size:0.7rem; color:var(--muted);">→</span>
+                        <span
+                            style="font-size:0.7rem; background:rgba(22,163,74,0.2); color:#4ade80; padding:3px 9px; border-radius:6px; font-weight:700;">1
+                            — HIGH</span>
+                    </div>
+                </div>
+
+                <!-- Logic Gates -->
+                <div class="card">
+                    <span class="ci">🔀</span>
+                    <h3>Logic Gates</h3>
+                    <p>Logic gates are the basic decision-making units of digital circuits. They combine binary inputs
+                        to produce a binary output:</p>
+                    <ul style="margin-top:0.5rem;">
+                        <li><strong style="color:#fff;">AND Gate</strong> — Output is 1 only if both inputs are 1</li>
+                        <li><strong style="color:#fff;">OR Gate</strong> — Output is 1 if at least one input is 1</li>
+                        <li><strong style="color:#fff;">NOT Gate</strong> — Inverts the input (0→1, 1→0)</li>
+                    </ul>
+                    <p style="margin-top:0.5rem; font-size:0.78rem;">Used in alarm logic, threshold detection circuits
+                        in medical devices.</p>
+                </div>
+
+                <!-- Microprocessors -->
+                <div class="card">
+                    <span class="ci">💻</span>
+                    <h3>Microprocessors</h3>
+                    <p>A microprocessor is the "brain" of a medical instrument. It executes programmed instructions to:
+                    </p>
+                    <ul style="margin-top:0.5rem;">
+                        <li>Read sensor data via ADC</li>
+                        <li>Perform calculations (e.g., SpO₂, heart rate)</li>
+                        <li>Drive display and alarms</li>
+                        <li>Transmit data wirelessly</li>
+                    </ul>
+                </div>
+
+                <!-- Sensors -->
+                <div class="card">
+                    <span class="ci">📡</span>
+                    <h3>Sensors &amp; Transducers</h3>
+                    <p>Sensors convert physical quantities into electrical signals. In medical instruments:</p>
+                    <ul style="margin-top:0.5rem;">
+                        <li><strong style="color:#fff;">Thermistor</strong> — measures temperature</li>
+                        <li><strong style="color:#fff;">Photodiode</strong> — detects light (pulse oximeter)</li>
+                        <li><strong style="color:#fff;">Pressure sensor</strong> — blood pressure monitor</li>
+                        <li><strong style="color:#fff;">Electrodes</strong> — detect heart signals (ECG)</li>
+                    </ul>
+                </div>
+
+                <!-- ADC -->
+                <div class="card">
+                    <span class="ci">🔄</span>
+                    <h3>ADC (Analog-to-Digital Converter)</h3>
+                    <p>The ADC converts continuous analog physiological signals (e.g., a voltage from a thermistor) into
+                        a digital binary number that the microprocessor can understand and process.</p>
+                    <p style="margin-top:0.4rem; font-size:0.78rem;">Example: 12-bit ADC gives 4096 possible values for
+                        a 0–3.3 V signal — very fine resolution.</p>
+                </div>
+
+                <!-- Display -->
+                <div class="card">
+                    <span class="ci">🖥️</span>
+                    <h3>Digital Displays</h3>
+                    <p>Processed data is shown on digital output units:</p>
+                    <ul style="margin-top:0.5rem;">
+                        <li><strong style="color:#fff;">LCD / OLED</strong> — show numeric values and waveforms</li>
+                        <li><strong style="color:#fff;">7-Segment</strong> — simple numeric readout (thermometers)</li>
+                        <li><strong style="color:#fff;">LED Indicators</strong> — alarms and status signals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 4 – APPLICATIONS
+══════════════════════════════════════════════════ -->
+    <section id="s4">
+        <div class="inner">
+            <span class="eyebrow anim">03 — Applications</span>
+            <h2 class="anim d1">Applications in Medical Instruments</h2>
+            <div class="bar anim d1"></div>
+            <p class="anim d2" style="margin-bottom:1rem;">Digital electronics power a wide range of life-saving
+                diagnostic tools across healthcare settings:</p>
+
+            <div class="app-list anim d2">
+                <div class="app-item">
+                    <div class="app-ico">💓</div>
+                    <div class="app-body">
+                        <strong>ECG — Electrocardiogram</strong>
+                        <span>Records the heart's electrical activity using digital signal processing. Detects
+                            arrhythmias, heart attacks, and other conditions. Outputs a real-time waveform on a digital
+                            screen.</span>
+                    </div>
+                </div>
+                <div class="app-item">
+                    <div class="app-ico">🧲</div>
+                    <div class="app-body">
+                        <strong>MRI — Magnetic Resonance Imaging</strong>
+                        <span>Uses powerful magnets and radio waves. Digital processors reconstruct body images from raw
+                            frequency data using Fourier Transform algorithms executed on dedicated digital
+                            hardware.</span>
+                    </div>
+                </div>
+                <div class="app-item">
+                    <div class="app-ico">🌡️</div>
+                    <div class="app-body">
+                        <strong>Digital Thermometer</strong>
+                        <span>A thermistor sensor feeds analog voltage to an ADC. The microcontroller converts it to a
+                            temperature reading displayed on a 7-segment LCD — accurate to ±0.1°C.</span>
+                    </div>
+                </div>
+                <div class="app-item">
+                    <div class="app-ico">🩺</div>
+                    <div class="app-body">
+                        <strong>Blood Pressure Monitor (Sphygmomanometer)</strong>
+                        <span>Oscillometric pressure sensors detect arterial wall vibrations. A digital microcontroller
+                            analyses the oscillation pattern and calculates systolic and diastolic pressure
+                            values.</span>
+                    </div>
+                </div>
+                <div class="app-item">
+                    <div class="app-ico">🔬</div>
+                    <div class="app-body">
+                        <strong>Pulse Oximeter</strong>
+                        <span>Uses red and infrared LEDs and a photodiode. The digital MCU calculates SpO₂ (blood oxygen
+                            %) and heart rate using ratio-of-ratios algorithm — instantly displayed on OLED.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 5 – CASE STUDY (ECG)
+══════════════════════════════════════════════════ -->
+    <section id="s5">
+        <div class="inner">
+            <span class="eyebrow anim">04 — Case Study</span>
+            <h2 class="anim d1">💓 ECG Machine — Electrocardiogram</h2>
+            <div class="bar anim d1"></div>
+
+            <div class="cs-wrap">
+                <div class="anim d2">
+                    <h3 style="color:#fff; font-size:0.9rem; margin-bottom:0.8rem;">How Digital Electronics Is Used</h3>
+                    <ul>
+                        <li><strong style="color:var(--teal)">Instrument:</strong> 12-Lead ECG Machine</li>
+                        <li><strong style="color:var(--teal)">Sensor:</strong> Surface skin electrodes detect
+                            millivolt-range bio-electric potentials from the heart</li>
+                        <li><strong style="color:var(--teal)">Signal Amplification:</strong> Instrumentation Amplifier
+                            (INA) boosts the 1–5 mV signal to a processable level</li>
+                        <li><strong style="color:var(--teal)">Digital Filtering:</strong> Notch filter removes 50 Hz
+                            power-line noise; bandpass filter isolates cardiac frequency (0.05–150 Hz)</li>
+                        <li><strong style="color:var(--teal)">ADC:</strong> 12-bit ADC digitises the filtered analog
+                            waveform at 500 samples/second</li>
+                        <li><strong style="color:var(--teal)">Microprocessor:</strong> Performs P-QRS-T wave detection,
+                            calculates heart rate and identifies arrhythmia patterns</li>
+                        <li><strong style="color:var(--teal)">Output:</strong> Waveform displayed on LCD; printout
+                            generated; data stored in memory or sent via Bluetooth/Wi-Fi</li>
+                    </ul>
+                    <div class="callout">
+                        "A digital ECG machine captures and analyses 12 different electrical views of the heart
+                        simultaneously — impossible with analog-only systems."
+                    </div>
+                </div>
+
+                <div class="flow-box anim d3">
+                    <h3>Signal Flow — ECG Machine</h3>
+                    <div class="step">👤 Skin Electrodes (12 Leads)</div>
+                    <div class="arr">↓</div>
+                    <div class="step">⚡ Instrumentation Amplifier (INA)</div>
+                    <div class="arr">↓</div>
+                    <div class="step">🔇 Notch + Bandpass Filter</div>
+                    <div class="arr">↓</div>
+                    <div class="step">🔄 12-bit ADC (500 SPS)</div>
+                    <div class="arr">↓</div>
+                    <div class="step">💻 Microprocessor / DSP</div>
+                    <div class="arr">↓</div>
+                    <div class="step">📊 QRS Wave Analysis</div>
+                    <div class="arr">↓</div>
+                    <div class="step">🖥️ LCD Display + Printout</div>
+                    <div class="arr">↓</div>
+                    <div class="step">☁️ Memory / Wireless Transmission</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 6 – ADVANTAGES
+══════════════════════════════════════════════════ -->
+    <section id="s6">
+        <div class="inner">
+            <span class="eyebrow anim"
+                style="background:rgba(22,163,74,0.1); border-color:rgba(22,163,74,0.3); color:#4ade80;">05 —
+                Advantages</span>
+            <h2 class="anim d1">Advantages of Digital Electronics</h2>
+            <div class="bar anim d1" style="background:linear-gradient(90deg,#16a34a,#4ade80);"></div>
+
+            <div class="adv-grid">
+                <div class="adv-card anim d2">
+                    <span class="adv-icon">🎯</span>
+                    <h3>High Accuracy</h3>
+                    <p>Digital instruments measure to decimal precision — a digital thermometer reads to ±0.1°C, far
+                        better than a glass mercury thermometer.</p>
+                </div>
+                <div class="adv-card anim d2">
+                    <span class="adv-icon">⚡</span>
+                    <h3>Fast Processing</h3>
+                    <p>Microprocessors perform thousands of calculations per second — enabling real-time waveform
+                        display, instant alarms, and live vital sign monitoring.</p>
+                </div>
+                <div class="adv-card anim d3">
+                    <span class="adv-icon">💾</span>
+                    <h3>Easy Data Storage</h3>
+                    <p>Patient readings can be stored in flash memory, SD cards, or cloud databases. A digital ECG
+                        record takes seconds to retrieve vs searching paper files.</p>
+                </div>
+                <div class="adv-card anim d3">
+                    <span class="adv-icon">🛡️</span>
+                    <h3>Reliability &amp; Noise Immunity</h3>
+                    <p>Binary signals resist electromagnetic interference. Digital filters remove noise without signal
+                        loss — ensuring clean, trustworthy readings every time.</p>
+                </div>
+                <div class="adv-card anim d4">
+                    <span class="adv-icon">📶</span>
+                    <h3>Remote Monitoring</h3>
+                    <p>Wireless-enabled digital instruments allow ICU patients to be monitored remotely. Doctors can
+                        view ECG reports on their phones from anywhere in the world.</p>
+                </div>
+                <div class="adv-card anim d4">
+                    <span class="adv-icon">📱</span>
+                    <h3>Compact &amp; Portable</h3>
+                    <p>Integration of ADC, MCU, display on a single chip enables miniaturised wearable devices —
+                        smartwatch heart monitors, fingertip pulse oximeters, etc.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 7 – LIMITATIONS
+══════════════════════════════════════════════════ -->
+    <section id="s7">
+        <div class="inner">
+            <span class="eyebrow anim"
+                style="background:rgba(220,38,38,0.1); border-color:rgba(220,38,38,0.3); color:#f87171;">06 —
+                Limitations</span>
+            <h2 class="anim d1">Limitations &amp; Challenges</h2>
+            <div class="bar anim d1" style="background:linear-gradient(90deg,#dc2626,#f87171);"></div>
+
+            <div class="lim-grid">
+                <div class="lim-card anim d2">
+                    <span class="adv-icon">💰</span>
+                    <h3>High Cost</h3>
+                    <p>Advanced digital medical instruments (MRI, digital ECG) are expensive to purchase and install.
+                        This limits their availability in rural or low-income healthcare settings.</p>
+                </div>
+                <div class="lim-card anim d2">
+                    <span class="adv-icon">🎓</span>
+                    <h3>Requires Technical Knowledge</h3>
+                    <p>Operating, calibrating, and troubleshooting digital medical equipment demands trained
+                        technicians. Untrained use can lead to incorrect readings and misdiagnosis.</p>
+                </div>
+                <div class="lim-card anim d3">
+                    <span class="adv-icon">🔧</span>
+                    <h3>Maintenance &amp; Calibration</h3>
+                    <p>Digital instruments require periodic factory calibration, firmware updates, and component checks.
+                        A software bug or hardware fault can cause equipment downtime in critical care.</p>
+                </div>
+                <div class="lim-card anim d3">
+                    <span class="adv-icon">⚡</span>
+                    <h3>Power Dependency</h3>
+                    <p>All digital systems require a stable power supply. In areas with frequent power cuts, battery
+                        backup must be in place — adding cost and complexity.</p>
+                </div>
+                <div class="lim-card anim d4">
+                    <span class="adv-icon">🔒</span>
+                    <h3>Cybersecurity Risks</h3>
+                    <p>Network-connected medical devices can be hacked or compromised. Patient data privacy and device
+                        tampering are serious regulatory concerns (HIPAA compliance).</p>
+                </div>
+                <div class="lim-card anim d4">
+                    <span class="adv-icon">♻️</span>
+                    <h3>Electronic Waste</h3>
+                    <p>Frequent upgrades and component failure generate e-waste. Disposal of medical-grade electronics
+                        must follow strict environmental and bio-hazard safety protocols.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     SLIDE 8 – CONCLUSION
+══════════════════════════════════════════════════ -->
+    <section id="s8">
+        <div class="inner">
+            <span class="eyebrow anim">07 — Conclusion</span>
+            <h2 class="anim d1">Conclusion &amp; Future Scope</h2>
+            <div class="bar anim d1"></div>
+
+            <div class="concl-box anim d2">
+                <h3 style="color:#fff; font-size:0.95rem; margin-bottom:0.7rem;">Summary</h3>
+                <p>
+                    Digital electronics have completely transformed the medical field — replacing slow, imprecise analog
+                    instruments with fast, accurate, and interconnected digital systems. Through the case study of the
+                    ECG machine, we saw how core components — sensors, amplifiers, ADCs, microprocessors, and displays —
+                    work together to acquire, process, and present critical patient data.
+                </p>
+                <p style="margin-top:0.75rem;">
+                    While challenges like cost, technical skill requirements, and cybersecurity remain, the benefits of
+                    digital medical instruments far outweigh the drawbacks. The technology continues to become cheaper,
+                    smaller, and more powerful with each generation.
+                </p>
+            </div>
+
+            <h3 class="anim d3" style="color:#fff; font-size:0.9rem; margin-bottom:0.5rem;">Future Scope of Digital
+                Electronics in Healthcare</h3>
+            <div class="future-chips anim d4">
+                <span class="chip">🤖 AI-Powered Diagnostics</span>
+                <span class="chip">⌚ Wearable Biosensors</span>
+                <span class="chip">☁️ Cloud-Connected ICU Monitoring</span>
+                <span class="chip">🧬 Lab-on-Chip Devices</span>
+                <span class="chip">📱 Smartphone-Based Diagnosis</span>
+                <span class="chip">🔬 Nano Implantable Sensors</span>
+                <span class="chip">🛰️ Telemedicine &amp; Telesurgery</span>
+                <span class="chip">🧠 Brain-Computer Interfaces</span>
+                <span class="chip">🏥 Smart Hospital Systems</span>
+            </div>
+
+            <div class="callout anim d5" style="margin-top:1.2rem;">
+                "The future of healthcare lies at the intersection of digital electronics, artificial intelligence, and
+                the Internet of Medical Things (IoMT) — making medicine smarter, faster, and more accessible."
+            </div>
+
+            <div class="print-wrap anim d6">
+                <button class="btn-pdf" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Print / Save as PDF
+                </button>
+                <p class="print-note">Use "Save as PDF" in the browser print dialog to export this presentation.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        // ── Scroll animations ──────────────────────────────
+        const animEls = document.querySelectorAll('.anim');
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+        }, { threshold: 0.12 });
+        animEls.forEach(el => io.observe(el));
+
+        // ── Active dot + nav highlights ────────────────────
+        const slides = document.querySelectorAll('section[id]');
+        const dots = document.querySelectorAll('.dots a');
+        const navLinks = document.querySelectorAll('.topbar-links a');
+
+        const sio = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                const id = e.target.id;
+                const idx = [...slides].indexOf(e.target);
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+            });
+        }, { threshold: 0.5 });
+        slides.forEach(s => sio.observe(s));
+    </script>
+</body>
+
+</html>
